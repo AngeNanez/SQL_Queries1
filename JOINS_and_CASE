@@ -1,0 +1,70 @@
+--- Ten most seelings stores with county's population and category
+
+SELECT DISTINCT COUNT(a.store), a.name, ROUND(SUM(b.total), 2) AS sum_total, b.category_name, c. county, c.population
+FROM stores a
+JOIN sales b USING (store)
+JOIN counties c USING (county)
+WHERE store_status LIKE 'A'
+GROUP BY a.store, a.name, b.total, b.category_name, c.county, c.population
+ORDER BY 3 DESC
+LIMIT 10;
+
+
+--- Top 3 highest average revenue stores
+
+SELECT a.store, ROUND(AVG(a.total), 2) AS avg_total_sales, b.name, c.county
+FROM sales a
+JOIN stores b ON a.store = b.store
+JOIN counties c USING (county)
+GROUP BY a.store, a.total, b.name, c.county
+ORDER BY 2 DESC
+LIMIT 3;
+
+
+--- Lowest selling stores and categories
+
+SELECT a.store, ROUND(SUM(a.total), 2) AS avg_total_sales, b.name, c.county, c.population, a.category_name
+FROM sales a
+JOIN stores b ON a.store = b.store
+JOIN counties c USING (county)
+GROUP BY a.store, a.total, b.name, c.county, a.category_name, c.population
+ORDER BY 2 
+LIMIT 3
+
+
+--- Total sales per category
+
+SELECT SUM(total) as category_total_sales, category_name,
+  CASE when category_name LIKE '%WHISK%' then 'Whiskeys'
+       when category_name LIKE '%VODK%' then 'Vodka'
+       when category_name LIKE '%MALT%' then 'Whiskeys'
+       when category_name LIKE 'TEQUILA' then 'Tequila'
+       when category_name LIKE '%RUM' then 'Rum'
+       when category_name LIKE 'CORDIAL%' then 'Liqueurs'
+  else 'Booze'
+  END as Broad_category
+FROM sales
+GROUP BY 2
+ORDER BY 1 DESC;
+
+
+--- Total sales by store and category
+
+SELECT b.name, SUM(a.total) as category_total_sales, 
+  CASE when category_name LIKE '%WHISK%' then 'Whiskeys'
+  		 when category_name LIKE '%VODK%' then 'Vodka'
+  		 when category_name LIKE '%MALT%' then 'Whiskeys'
+  		 when category_name LIKE 'TEQUILA' then 'Tequila'
+  	 	 when category_name LIKE '%RUM' then 'Rum'
+  		 when category_name LIKE 'CORDIAL%' then 'Liqueurs'
+  	else 'Booze'
+  END as Broad_category, a.category_name
+FROM sales a
+JOIN stores b
+USING (store)
+GROUP BY 1,3,4
+ORDER BY 2 DESC
+LIMIT 100;
+
+-----
+
