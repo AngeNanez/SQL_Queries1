@@ -1,0 +1,29 @@
+--- Percentage of sales per county higher than $100
+
+SELECT county, round(avg(category_over_100),1)*100 as pct_sales
+FROM (SELECT county, 
+	  CASE when total > 100 then 1 else 0 
+	  END as category_over_100
+	  FROM sales) AS temp
+GROUP BY county
+ORDER BY 2 DESC
+
+
+--- AVG price per bottle size
+
+SELECT AVG(CAST(bottle_price as decimal)) as Avg_Btl_Price
+FROM products 
+WHERE bottle_size IN
+	(SELECT bottle_size
+	 FROM products
+	 WHERE bottle_size >= 1000)
+
+
+--- AVG price per total bottles sold
+
+SELECT AVG(bottle_price :: decimal) as Avg_Btl_Price
+FROM products 
+WHERE shelf_price IN
+	(SELECT bottle_qty
+	 FROM sales
+	 WHERE total >= 1000)
