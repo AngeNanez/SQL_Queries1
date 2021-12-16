@@ -1,0 +1,53 @@
+--- Initial exploration in PGAdmin SQL of the IOWA Liquor Database
+
+SELECT DISTINCT *
+FROM sales;
+
+SELECT DISTINCT *
+FROM stores;
+
+SELECT DISTINCT*
+FROM products;
+
+SELECT DISTINCT*
+FROM counties;
+
+
+--- Looking for active stores using filters
+
+SELECT DISTINCT *
+FROM stores
+WHERE store_status LIKE 'A' 
+ORDER BY store_status
+
+----- Looking for top 10 most expensive products
+
+SELECT DISTINCT *
+FROM products
+WHERE case_cost is not NULL
+ORDER BY case_cost DESC
+LIMIT 10;
+
+----- Using aggregation and filter to find top 10 selling counties
+
+SELECT DISTINCT COUNT(store), county, SUM(total)
+FROM sales
+WHERE county IS NOT NULL
+GROUP BY county
+ORDER BY 1 DESC
+LIMIT 10;
+
+--- Average revenue per store joining tables and filters
+
+SELECT DISTINCT a.store, a.total, b.name, b.store, b.store_status
+FROM sales a
+JOIN stores b
+USING (store)
+WHERE  b.store_status LIKE 'A'
+ORDER BY a.total DESC
+LIMIT 10;
+
+
+
+
+
